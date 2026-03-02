@@ -9,8 +9,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandling {
 
-    @ExceptionHandler({AlreadyExists.class})
-    public ApiResponse handleAlreadyExists(AlreadyExists e){
-        return new ApiResponse(e.getMessage(), HttpStatus.CONFLICT);
+    @ExceptionHandler({AlreadyExists.class, NotFountException.class})
+    public ApiResponse handleAlreadyExistsAndNotFound(RuntimeException e){
+        String msg = e.getMessage();
+        HttpStatus status = null;
+        if(e instanceof  AlreadyExists){
+            status = HttpStatus.CONFLICT;
+        } else if (e instanceof NotFountException) {
+            status = HttpStatus.NOT_FOUND;
+        }
+        return new ApiResponse(msg, status);
     }
 }

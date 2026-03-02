@@ -1,27 +1,18 @@
 package com.yuvraj.ecommerce.dto;
 
 import com.yuvraj.ecommerce.entity.Address;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-public class UserResponseDto {
-
-    private int userId;
-
-    private String firstName;
-
-    private String lastName;
-
-    private LocalDate dob;
-
+public class StoreResponseDto {
+    private String name;
+    private String phone;
     private String email;
-
     private Address address;
-
 }
