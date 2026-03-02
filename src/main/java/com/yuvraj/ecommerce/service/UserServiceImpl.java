@@ -5,6 +5,7 @@ import com.yuvraj.ecommerce.entity.Address;
 import com.yuvraj.ecommerce.entity.Users;
 import com.yuvraj.ecommerce.exceptionHandling.AlreadyExists;
 import com.yuvraj.ecommerce.exceptionHandling.ApiResponse;
+import com.yuvraj.ecommerce.exceptionHandling.NotFountException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -32,26 +33,27 @@ public class UserServiceImpl implements UserService{
     @Override
     @Transactional
     public Users saveUser(Users user) {
-        if(findUserByEmail(user.getEmail()) != null){
-            try {
-                throw new AlreadyExists("User","email",user.getEmail());
-            } catch (AlreadyExists e) {
-                throw new RuntimeException(e);
-            }
-        }
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         return userDao.saveUser(user);
     }
 
     @Override
     public Users findUserByEmail(String email) {
-        return userDao.findUserByEmail(email);
+        Users user = userDao.findUserByEmail(email);
+        if(user == null){
+            throw new NotFountException("User not found with email: "+ email);
+        }
+        return user;
     }
 
     @Override
     public Users findUserById(int id)  {
-        return userDao.findUserById(id);
+        Users user = userDao.findUserById(id);
 
+        if(user == null){
+            throw new NotFountException("User not found with id: "+id);
+        }
+         return user;
     }
 
     @Override
@@ -62,8 +64,7 @@ public class UserServiceImpl implements UserService{
     @Override
     @Transactional
     public Users updateUser(Users user, int id) {
-        user.setUserId(id);
-        return userDao.updateUser(user);
+        return userDao.updateUser(user, id);
     }
 
     @Override

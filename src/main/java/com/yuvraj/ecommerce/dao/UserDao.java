@@ -10,9 +10,9 @@ import java.util.List;
 public interface UserDao {
     Users saveUser(Users user);
     Users findUserByEmail(String email);
-    Users findUserById(int id) throws NotFountException;
+    Users findUserById(int id);
     List<Users> findAllUsers();
     Users updateAddress(int userId, Address address);
-    Users updateUser(Users user);
-    void deleteUser(Users user);
+    Users updateUser(Users user, int id);
+    void deleteUser(int id);
 }

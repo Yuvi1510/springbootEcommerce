@@ -2,6 +2,7 @@ package com.yuvraj.ecommerce.dao;
 
 import com.yuvraj.ecommerce.entity.Address;
 import com.yuvraj.ecommerce.entity.Users;
+import com.yuvraj.ecommerce.exceptionHandling.AlreadyExists;
 import com.yuvraj.ecommerce.exceptionHandling.NotFountException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -22,6 +23,9 @@ public class UserDaoImpl implements UserDao{
 
     @Override
     public Users saveUser(Users user) {
+        if(findUserByEmail(user.getEmail()) != null){
+            throw new AlreadyExists("User","email", user.getEmail());
+        }
         entityManager.persist(user);
         return user;
     }
@@ -34,7 +38,7 @@ public class UserDaoImpl implements UserDao{
         try{
             return query.getSingleResult();
         }catch (NoResultException e){
-           throw new NotFountException("User not found with email: "+ email);
+            return null;
         }
     }
 
@@ -45,7 +49,7 @@ public class UserDaoImpl implements UserDao{
         try{
             return query.getSingleResult();
         }catch (NoResultException e){
-            throw new NotFountException("User not found with id: "+id);
+            return null;
         }
     }
 
@@ -58,22 +62,36 @@ public class UserDaoImpl implements UserDao{
     @Override
     public Users updateAddress(int userId, Address address) {
         Users user = findUserById(userId);
+        if(user == null){
+            throw new NotFountException("User not found with id: "+userId);
+        }
 
         user.updateAddress(address);
-
         entityManager.persist(user);
 
         return user;
     }
 
     @Override
-    public Users updateUser(Users user) {
+    public Users updateUser(Users user, int id) {
+        // from request i get a user with updated infos and also the id
+        // so first check if user with that id exists or not
+        Users userToUpdate = findUserById(id);
+        if(userToUpdate == null){
+            throw new NotFountException("User not found with id: "+id);
+        }
+        // if user exists then set the id of the user with updated infos
+        user.setUserId(id);
         entityManager.persist(user);
         return user;
     }
 
     @Override
-    public void deleteUser(Users user) {
+    public void deleteUser(int id) {
+        Users user = findUserById(id);
+        if(user == null){
+            throw new NotFountException("User not found with id: "+id);
+        }
         entityManager.remove(user);
     }
 

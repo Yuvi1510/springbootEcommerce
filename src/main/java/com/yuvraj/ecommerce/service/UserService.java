@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import java.util.List;
 
 public interface UserService extends UserDetailsService {
-    Users saveUser(Users user) throws AlreadyExists;
+    Users saveUser(Users user) ;
     Users findUserByEmail(String email);
     Users findUserById(int id);
     List<Users> findAllUsers();

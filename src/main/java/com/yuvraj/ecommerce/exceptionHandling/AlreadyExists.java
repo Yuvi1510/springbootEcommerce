@@ -1,6 +1,6 @@
 package com.yuvraj.ecommerce.exceptionHandling;
 
-public class AlreadyExists extends Exception{
+public class AlreadyExists extends RuntimeException{
     private String entityType;
     private String fieldName;
     private String fieldValue;

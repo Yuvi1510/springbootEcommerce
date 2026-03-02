@@ -26,21 +26,20 @@ public class UserController {
         this.modelMapper = modelMapper;
     }
 
-    @PostMapping("/")
-    public UserResponseDto addUser(@RequestBody Users user) throws AlreadyExists {
+    @PostMapping
+    public UserResponseDto addUser(@RequestBody Users user){
         Users savedUser =  userService.saveUser(user);
-
         return modelMapper.map(savedUser, UserResponseDto.class);
     }
 
     @GetMapping("/{id}")
-    public UserResponseDto getUser(@PathVariable int id) throws NotFountException {
+    public UserResponseDto getUser(@PathVariable int id){
         Users user = userService.findUserById(id);
 
         return modelMapper.map(user, UserResponseDto.class);
     }
 
-    @GetMapping("/")
+    @GetMapping
     public List<UserResponseDto> getAllUsers(){
         List<Users> users = userService.findAllUsers();
         List<UserResponseDto> userResponseDtos = new ArrayList<>();
@@ -63,7 +62,8 @@ public class UserController {
         return modelMapper.map(updatedUser, UserResponseDto.class);
     }
 
-    public ApiResponse deleteUser(@PathVariable int id) throws NotFountException {
+    @DeleteMapping("/{id}")
+    public ApiResponse deleteUser(@PathVariable int id)  {
         return userService.deleteUser(id);
     }
 }
