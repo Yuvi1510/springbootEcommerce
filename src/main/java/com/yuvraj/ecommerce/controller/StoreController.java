@@ -4,6 +4,7 @@ import com.yuvraj.ecommerce.dto.StoreResponseDto;
 import com.yuvraj.ecommerce.entity.Store;
 import com.yuvraj.ecommerce.service.StoreService;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,26 +19,31 @@ public class StoreController {
     }
 
     @PostMapping
-    public StoreResponseDto addStore(@RequestBody Store store){
+    public ResponseEntity<StoreResponseDto> addStore(@RequestBody Store store){
         Store savedStore = storeService.addStore(store);
-        return modelMapper.map(savedStore, StoreResponseDto.class);
+        StoreResponseDto storeResponseDto =  modelMapper.map(savedStore, StoreResponseDto.class);
+        return ResponseEntity.ok().body(storeResponseDto);
     }
 
     @GetMapping("/{id}")
-    public StoreResponseDto getStoreById(@PathVariable int id){
+    public ResponseEntity<StoreResponseDto> getStoreById(@PathVariable int id){
         Store store = storeService.findStoreById(id);
-        return modelMapper.map(store, StoreResponseDto.class);
+        StoreResponseDto storeResponseDto =  modelMapper.map(store, StoreResponseDto.class);
+        return ResponseEntity.ok().body(storeResponseDto);
     }
 
     @GetMapping(params = "name")
-    public StoreResponseDto getStoreByName(@RequestParam String name){
+    public ResponseEntity<StoreResponseDto> getStoreByName(@RequestParam String name){
         Store store = storeService.findStoreByName(name);
-        return modelMapper.map(store, StoreResponseDto.class);
+        StoreResponseDto storeResponseDto =  modelMapper.map(store, StoreResponseDto.class);
+        return ResponseEntity.ok().body(storeResponseDto);
     }
 
     @GetMapping(params = "email")
-    public StoreResponseDto getStoreByEmail(@RequestParam String email){
+    public ResponseEntity<StoreResponseDto> getStoreByEmail(@RequestParam String email){
         Store store = storeService.findStoreByEmail(email);
-        return modelMapper.map(store, StoreResponseDto.class);
+        StoreResponseDto storeResponseDto =  modelMapper.map(store, StoreResponseDto.class);
+
+        return ResponseEntity.ok().body(storeResponseDto);
     }
 }
