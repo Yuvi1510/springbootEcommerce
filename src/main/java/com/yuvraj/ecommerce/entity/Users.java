@@ -2,6 +2,7 @@ package com.yuvraj.ecommerce.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 

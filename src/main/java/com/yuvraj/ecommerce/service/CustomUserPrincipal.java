@@ -5,7 +5,6 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.nio.file.attribute.UserPrincipal;
 import java.util.Collection;
 import java.util.List;
 
@@ -17,6 +16,9 @@ public class CustomUserPrincipal implements UserDetails {
         this.user = user;
     }
 
+    public int getUserId(){
+        return user.getUserId();
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
