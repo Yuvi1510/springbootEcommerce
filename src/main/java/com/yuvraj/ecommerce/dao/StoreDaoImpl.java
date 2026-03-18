@@ -4,13 +4,16 @@ import com.yuvraj.ecommerce.entity.Store;
 import com.yuvraj.ecommerce.exceptionHandling.AlreadyExists;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class StoreDaoImpl implements StoreDao{
     private  final EntityManager entityManager;
 
+    @Autowired
     public StoreDaoImpl(EntityManager entityManager) {
+
         this.entityManager = entityManager;
     }
 

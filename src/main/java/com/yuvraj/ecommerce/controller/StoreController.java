@@ -1,6 +1,6 @@
 package com.yuvraj.ecommerce.controller;
 
-import com.yuvraj.ecommerce.dto.StoreResponseDto;
+import com.yuvraj.ecommerce.responses.StoreResponseDto;
 import com.yuvraj.ecommerce.entity.Store;
 import com.yuvraj.ecommerce.service.StoreService;
 import org.modelmapper.ModelMapper;

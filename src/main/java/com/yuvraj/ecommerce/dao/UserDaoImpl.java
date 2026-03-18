@@ -6,8 +6,9 @@ import com.yuvraj.ecommerce.exceptionHandling.AlreadyExists;
 import com.yuvraj.ecommerce.exceptionHandling.NotFountException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
-import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,11 +16,14 @@ import java.util.List;
 @Repository
 public class UserDaoImpl implements UserDao{
 
-    private final EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    public UserDaoImpl(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+
+//    public UserDaoImpl(EntityManager entityManager) {
+//
+//        this.entityManager = entityManager;
+//    }
 
     @Override
     public Users saveUser(Users user) {
@@ -67,7 +71,7 @@ public class UserDaoImpl implements UserDao{
         }
 
         user.updateAddress(address);
-        entityManager.persist(user);
+        entityManager.merge(user);
 
         return user;
     }
@@ -82,7 +86,7 @@ public class UserDaoImpl implements UserDao{
         }
         // if user exists then set the id of the user with updated infos
         user.setUserId(id);
-        entityManager.persist(user);
+        entityManager.merge(user);
         return user;
     }
 

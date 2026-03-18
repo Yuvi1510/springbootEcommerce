@@ -21,13 +21,11 @@ public class UserServiceImpl implements UserService{
 
     private final UserDao userDao;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final ModelMapper modelMapper;
 
-    public UserServiceImpl(UserDao userDao, BCryptPasswordEncoder bCryptPasswordEncoder, ModelMapper modelMapper) {
+    public UserServiceImpl(UserDao userDao, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDao = userDao;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 
-        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -83,7 +81,6 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Users user = findUserByEmail(username);
-
         return new CustomUserPrincipal(user);
     }
 }

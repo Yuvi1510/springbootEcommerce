@@ -3,33 +3,15 @@ package com.yuvraj.ecommerce.responses;
 public class JwtResponse {
     private String token;
     private String type = "Bearer";
-    private String email;
-    private String firstName;
-    private String lastName;
 
-    public JwtResponse(String token, String email, String firstName, String lastName) {
+    public JwtResponse(String token) {
         this.token = token;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
+
     }
 
     public String getToken() {
         return token;
     }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
     public String getType() {
         return type;
     }

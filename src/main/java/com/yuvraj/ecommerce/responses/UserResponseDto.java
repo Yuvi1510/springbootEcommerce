@@ -1,4 +1,4 @@
-package com.yuvraj.ecommerce.dto;
+package com.yuvraj.ecommerce.responses;
 
 import com.yuvraj.ecommerce.entity.Address;
 import lombok.Getter;

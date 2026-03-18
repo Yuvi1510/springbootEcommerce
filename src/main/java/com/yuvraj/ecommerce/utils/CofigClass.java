@@ -1,4 +1,4 @@
-package com.yuvraj.ecommerce.configs;
+package com.yuvraj.ecommerce.utils;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
