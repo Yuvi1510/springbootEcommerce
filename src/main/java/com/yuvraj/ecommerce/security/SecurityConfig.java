@@ -25,10 +25,13 @@ public class SecurityConfig {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserServiceImpl userService;
     private final JwtSecurityFilter jwtSecurityFilter;
-    public SecurityConfig(BCryptPasswordEncoder bCryptPasswordEncoder, UserServiceImpl userService, JwtSecurityFilter jwtSecurityFilter) {
+    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+
+    public SecurityConfig(BCryptPasswordEncoder bCryptPasswordEncoder, UserServiceImpl userService, JwtSecurityFilter jwtSecurityFilter, RestAuthenticationEntryPoint restAuthenticationEntryPoint) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userService = userService;
         this.jwtSecurityFilter = jwtSecurityFilter;
+        this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
     }
 
     @Bean
@@ -49,6 +52,7 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(restAuthenticationEntryPoint))
                 .authorizeHttpRequests(auth ->
                         auth
                                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
