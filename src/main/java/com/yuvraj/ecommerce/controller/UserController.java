@@ -3,7 +3,7 @@ package com.yuvraj.ecommerce.controller;
 import com.yuvraj.ecommerce.responses.UserResponseDto;
 import com.yuvraj.ecommerce.entity.Address;
 import com.yuvraj.ecommerce.entity.Users;
-import com.yuvraj.ecommerce.exceptionHandling.ApiResponse;
+import com.yuvraj.ecommerce.responses.ApiResponse;
 import com.yuvraj.ecommerce.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;

@@ -7,4 +7,5 @@ public interface StoreDao {
     Store findStoreById(int id);
     Store findStoreByName(String name);
     Store findStoreByEmail(String email);
+    Store findStoreByUserId(int userId);
 }

@@ -1,10 +1,13 @@
 package com.yuvraj.ecommerce.dao;
 
 import com.yuvraj.ecommerce.entity.Store;
+import com.yuvraj.ecommerce.entity.Users;
 import com.yuvraj.ecommerce.exceptionHandling.AlreadyExists;
+import com.yuvraj.ecommerce.service.CustomUserPrincipal;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -25,6 +28,13 @@ public class StoreDaoImpl implements StoreDao{
         if(findStoreByName(store.getName()) != null){
             throw new  AlreadyExists("Store","name", store.getName());
         }
+
+        // get the currently authenticated user form the security context holder
+        CustomUserPrincipal userPrincipal = (CustomUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // set user for the store so that foreign key will be set in the table
+        store.setUser(userPrincipal.getUser());
+
         entityManager.persist(store);
         return store;
     }
@@ -57,6 +67,18 @@ public class StoreDaoImpl implements StoreDao{
     public Store findStoreByEmail(String email) {
         TypedQuery<Store> query = entityManager.createQuery("FROM Store WHERE email=:storeEmail",Store.class);
         query.setParameter("storeEmail", email);
+
+        try{
+            return query.getSingleResult();
+        }catch (Exception e){
+            return null;
+        }
+    }
+
+    @Override
+    public Store findStoreByUserId(int userId) {
+        TypedQuery<Store> query = entityManager.createQuery("FROM Store s WHERE s.user.userId=:userId", Store.class);
+        query.setParameter("userId", userId);
 
         try{
             return query.getSingleResult();

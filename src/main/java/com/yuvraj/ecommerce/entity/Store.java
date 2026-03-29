@@ -1,5 +1,6 @@
 package com.yuvraj.ecommerce.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,11 @@ public class Store {
 
     @OneToOne(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private Address address;
+
+    @JsonIgnore
+    @OneToOne
+    @JoinColumn(name="user_id")
+    private Users user;
 
     public void updateAddress(Address address){
         address.setStore(this);

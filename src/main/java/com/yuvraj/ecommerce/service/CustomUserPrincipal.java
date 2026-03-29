@@ -1,6 +1,7 @@
 package com.yuvraj.ecommerce.service;
 
 import com.yuvraj.ecommerce.entity.Users;
+import lombok.Getter;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+@Getter
 public class CustomUserPrincipal implements UserDetails {
 
     private Users user;

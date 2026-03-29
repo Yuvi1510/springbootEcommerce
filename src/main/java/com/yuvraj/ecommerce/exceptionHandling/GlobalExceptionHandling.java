@@ -1,16 +1,17 @@
 package com.yuvraj.ecommerce.exceptionHandling;
 
+import com.yuvraj.ecommerce.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@Component
 @RestControllerAdvice
 public class GlobalExceptionHandling {
 
     @ExceptionHandler({AlreadyExists.class, NotFountException.class})
-    public ApiResponse handleAlreadyExistsAndNotFound(RuntimeException e){
+    public ResponseEntity<ApiResponse> handleAlreadyExistsAndNotFound(RuntimeException e){
         String msg = e.getMessage();
         HttpStatus status = null;
         if(e instanceof  AlreadyExists){
@@ -18,6 +19,6 @@ public class GlobalExceptionHandling {
         } else if (e instanceof NotFountException) {
             status = HttpStatus.NOT_FOUND;
         }
-        return new ApiResponse(msg, status);
+        return ResponseEntity.status(status).body(new ApiResponse(msg, status));
     }
 }

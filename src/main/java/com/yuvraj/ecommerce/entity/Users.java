@@ -39,6 +39,9 @@ public class Users {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Address address;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Store store;
+
     public void updateAddress(Address address){
         address.setUser(this);
         this.address = address;

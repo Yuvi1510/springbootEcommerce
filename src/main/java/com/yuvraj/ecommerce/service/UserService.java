@@ -2,9 +2,7 @@ package com.yuvraj.ecommerce.service;
 
 import com.yuvraj.ecommerce.entity.Address;
 import com.yuvraj.ecommerce.entity.Users;
-import com.yuvraj.ecommerce.exceptionHandling.AlreadyExists;
-import com.yuvraj.ecommerce.exceptionHandling.ApiResponse;
-import com.yuvraj.ecommerce.exceptionHandling.NotFountException;
+import com.yuvraj.ecommerce.responses.ApiResponse;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;

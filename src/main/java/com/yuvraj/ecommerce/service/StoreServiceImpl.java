@@ -57,4 +57,15 @@ public class StoreServiceImpl implements StoreService{
 
         return store;
     }
+
+    @Override
+    public Store findStoreByUserId(int userId) {
+        Store store = storeDao.findStoreByUserId(userId);
+
+        if(store == null){
+            throw new NotFountException("Store now found with user id: "+ userId);
+        }
+
+        return store;
+    }
 }

@@ -59,6 +59,7 @@ public class JwtTokenProvider {
         try{
             Jwts.parserBuilder().setSigningKey(jwtSecret)
                     .build().parseClaimsJws(token);
+           return true;
         }catch (SignatureException e){
             logger.error("Invalid jwt signature");
         }catch (MalformedJwtException e){

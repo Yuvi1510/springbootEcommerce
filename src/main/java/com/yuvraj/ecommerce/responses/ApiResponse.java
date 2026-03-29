@@ -1,4 +1,4 @@
-package com.yuvraj.ecommerce.exceptionHandling;
+package com.yuvraj.ecommerce.responses;
 
 import org.springframework.http.HttpStatus;
 

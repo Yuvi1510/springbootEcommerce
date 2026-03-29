@@ -2,8 +2,6 @@ package com.yuvraj.ecommerce.dao;
 
 import com.yuvraj.ecommerce.entity.Address;
 import com.yuvraj.ecommerce.entity.Users;
-import com.yuvraj.ecommerce.exceptionHandling.ApiResponse;
-import com.yuvraj.ecommerce.exceptionHandling.NotFountException;
 
 import java.util.List;
 
