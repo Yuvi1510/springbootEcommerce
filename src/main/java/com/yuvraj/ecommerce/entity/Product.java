@@ -1,5 +1,6 @@
 package com.yuvraj.ecommerce.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,10 +25,12 @@ public class Product {
     private Double price;
     private  int quantity;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="store_id")
     private Store store;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY) // set fetch type lazy for many to one relationship for better performance
     @JoinColumn(name = "category_id")
     private Category category;

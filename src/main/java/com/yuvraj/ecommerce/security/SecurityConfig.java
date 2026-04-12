@@ -57,12 +57,13 @@ public class SecurityConfig {
                         auth
                                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
                                 .requestMatchers( HttpMethod.POST, "/auth/login").permitAll()
+                                .requestMatchers( HttpMethod.GET, "/products/**").permitAll()
+                                .requestMatchers( HttpMethod.GET, "/categories/**").permitAll()
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .authenticationProvider(daoAuthenticationProvider())
                 .addFilterBefore(jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class);
-
 
         return http.build();
     }
