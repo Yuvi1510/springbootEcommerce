@@ -4,11 +4,11 @@ import com.yuvraj.ecommerce.dao.ProductDao;
 import com.yuvraj.ecommerce.entity.Product;
 import com.yuvraj.ecommerce.service.ProductService;
 import com.yuvraj.ecommerce.service.ProductServiceImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,6 +22,13 @@ public class ProductController {
         this.productService = productService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<Product>> findAllProducts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size){
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
+        List<Product> products = productService.findAll(pageable);
+
+        return ResponseEntity.ok().body(products);
+    }
 
     @GetMapping("/topEight")
     public ResponseEntity<List<Product>> getAllProducts(){

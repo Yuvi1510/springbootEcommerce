@@ -26,4 +26,10 @@ public class CarouselImage {
 
     @Column(name = "image_path")
     private String imagePath;
+
+    public CarouselImage(String title, String subTitle, String imagePath) {
+        this.title = title;
+        this.subTitle = subTitle;
+        this.imagePath = imagePath;
+    }
 }
