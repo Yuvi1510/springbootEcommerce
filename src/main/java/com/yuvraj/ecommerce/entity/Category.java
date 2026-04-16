@@ -6,20 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "categories")
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
-    private int categoryId;
+    private  int categoryId;
 
     @Column(name = "name")
     private String name;
@@ -28,18 +25,5 @@ public class Category {
     private String description;
 
     @Column(name = "image_path")
-    private String imagePath;
-
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Product> products = new ArrayList<>(); // initialize an arraylist to avoid null pointer exception
-
-    public void addProduct(Product product){
-        products.add(product);
-        product.setCategory(this);
-    }
-
-    public void removeProduct(Product product){
-        products.remove(product);
-        product.setCategory(null);
-    }
+    private String imageName;
 }

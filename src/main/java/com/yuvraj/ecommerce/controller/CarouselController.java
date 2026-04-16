@@ -1,11 +1,14 @@
 package com.yuvraj.ecommerce.controller;
 
 import com.yuvraj.ecommerce.entity.CarouselImage;
+import com.yuvraj.ecommerce.responses.ApiResponse;
 import com.yuvraj.ecommerce.service.CarouselService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,11 +18,27 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/carousel")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class CarouselController {
     private final CarouselService service;
 
     public CarouselController(CarouselService carouselService) {
         this.service = carouselService;
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse deleteCarouselImage(@PathVariable int id){
+        boolean success = service.deleteCarousel(id);
+
+            ApiResponse response = null;
+        if(success){
+            response = new ApiResponse("Success", HttpStatus.OK);
+        }else{
+            response = new ApiResponse("Failed", HttpStatus.BAD_REQUEST);
+
+        }
+
+        return response;
     }
 
     @PostMapping("/upload")
@@ -31,9 +50,11 @@ public class CarouselController {
        try{
            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
 
-           Path path = Path.of("uploads/"+ fileName);
-           Files.createDirectories(path);
-           Files.write(path, file.getBytes());
+           Path dirPath = Path.of("uploads/");
+           Files.createDirectories(dirPath);
+
+           Path filePath = Path.of(dirPath + File.separator + fileName);
+           Files.write(filePath, file.getBytes());
 
            CarouselImage image = new CarouselImage(title, subtitle, fileName);
            CarouselImage savedImage = service.addCarousel(image);

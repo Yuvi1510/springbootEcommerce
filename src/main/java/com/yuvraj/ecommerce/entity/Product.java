@@ -1,14 +1,15 @@
 package com.yuvraj.ecommerce.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity
-@Table(name="products")
+@Table(name = "product")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -16,22 +17,18 @@ import lombok.Setter;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
     private int productId;
-
     private String name;
+    private String slug;
+    private String brand;
+    private String sku;
     private String description;
-    private String imagePath;
-    private Double price;
-    private  int quantity;
+    private boolean price;
+    private int quantity;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="store_id")
+    @ManyToOne
+    @JoinColumn(name = "store_id")
     private Store store;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY) // set fetch type lazy for many to one relationship for better performance
-    @JoinColumn(name = "category_id")
-    private Category category;
 }

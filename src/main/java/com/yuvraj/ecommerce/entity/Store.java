@@ -2,15 +2,20 @@ package com.yuvraj.ecommerce.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Entity
-@Table(name = "stores")
-@Getter
-@Setter
+@Table(name = "store")
+@AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@Getter
 public class Store {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,19 +31,18 @@ public class Store {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "password")
-    private String password;
+    @Column(name = "created_at")
+    private LocalDate createdAt;
 
-    @OneToOne(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Address address;
+    @Column(name = "updated_at")
+    private LocalDate updatedAt;
 
-    @JsonIgnore
     @OneToOne
-    @JoinColumn(name="user_id")
-    private Users user;
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 
-    public void updateAddress(Address address){
-        address.setStore(this);
-        this.address = address;
-    }
+    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Product> products;
 }

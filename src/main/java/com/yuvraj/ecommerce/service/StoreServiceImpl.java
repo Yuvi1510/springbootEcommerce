@@ -1,71 +1,29 @@
 package com.yuvraj.ecommerce.service;
 
-import com.yuvraj.ecommerce.dao.StoreDao;
+import com.yuvraj.ecommerce.dao.StoreRepository;
 import com.yuvraj.ecommerce.entity.Store;
-import com.yuvraj.ecommerce.exceptionHandling.NotFountException;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.yuvraj.ecommerce.exceptionHandling.AlreadyExists;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 public class StoreServiceImpl implements StoreService{
-    private final StoreDao storeDao;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final StoreRepository storeRepository;
 
-    @Autowired
-    public StoreServiceImpl(StoreDao storeDao, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.storeDao = storeDao;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    public StoreServiceImpl(StoreRepository storeRepository) {
+        this.storeRepository = storeRepository;
     }
 
     @Override
-    @Transactional
-    public Store addStore(Store store) {
-        store.setPassword(bCryptPasswordEncoder.encode(store.getPassword()));
-        return storeDao.addStore(store);
-    }
-
-    @Override
-    public Store findStoreById(int id) {
-        Store store = storeDao.findStoreById(id);
-
-        if(store == null){
-            throw new NotFountException("Store not found with id: "+ id);
-        }
-
-        return store;
-    }
-
-    @Override
-    public Store findStoreByName(String name) {
-        Store store = storeDao.findStoreByName(name);
-
-        if(store == null){
-            throw new NotFountException("Store not found with name: "+ name);
-        }
-
-        return store;
-    }
-
-    @Override
-    public Store findStoreByEmail(String email) {
-        Store store = storeDao.findStoreByEmail(email);
-        if(store == null){
-            throw new NotFountException("Store now found with email: "+ email);
-        }
-
-        return store;
-    }
-
-    @Override
-    public Store findStoreByUserId(int userId) {
-        Store store = storeDao.findStoreByUserId(userId);
-
-        if(store == null){
-            throw new NotFountException("Store now found with user id: "+ userId);
-        }
-
-        return store;
+    public Store registerStore(Store store) {
+        Optional<Store> existingStore = storeRepository.findStoreByEmail(store.getEmail());
+        existingStore.ifPresent((s) -> {
+            throw new AlreadyExists("Store", "email", store.getEmail());
+        });
+        store.setCreatedAt(LocalDate.now());
+        store.setUpdatedAt(LocalDate.now());
+        return storeRepository.save(store);
     }
 }

@@ -1,4 +1,4 @@
-package com.yuvraj.ecommerce.responses;
+package com.yuvraj.ecommerce.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,14 +7,15 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponseDto {
+public class RegistrationRequest {
     private String firstName;
     private String lastName;
     private String phone;
     private LocalDate dob;
     private String email;
+    private String password;
 }

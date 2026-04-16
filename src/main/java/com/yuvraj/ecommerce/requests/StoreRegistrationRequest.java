@@ -1,18 +1,17 @@
-package com.yuvraj.ecommerce.responses;
+package com.yuvraj.ecommerce.requests;
 
-import com.yuvraj.ecommerce.entity.Address;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
-public class StoreResponseDto {
+@AllArgsConstructor
+@NoArgsConstructor
+public class StoreRegistrationRequest {
     private String name;
     private String phone;
     private String email;
-    private Address address;
 }
