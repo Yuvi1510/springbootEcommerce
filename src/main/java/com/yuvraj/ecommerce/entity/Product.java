@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -32,11 +33,15 @@ public class Product {
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("displayOrder ASC ")
-    private List<ProductImage> images;
+    private List<ProductImage> images = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "store_id")
     private Store store;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
 
     public void addImage(ProductImage img){

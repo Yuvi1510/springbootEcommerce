@@ -1,8 +1,12 @@
 package com.yuvraj.ecommerce.service;
 
+import com.yuvraj.ecommerce.dao.CategoryRepository;
 import com.yuvraj.ecommerce.dao.ProductRepository;
+import com.yuvraj.ecommerce.dao.StoreRepository;
+import com.yuvraj.ecommerce.entity.Category;
 import com.yuvraj.ecommerce.entity.Product;
 import com.yuvraj.ecommerce.entity.ProductImage;
+import com.yuvraj.ecommerce.entity.Store;
 import com.yuvraj.ecommerce.requests.AddProductRequest;
 import com.yuvraj.ecommerce.utils.Utils;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,13 +24,21 @@ import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService{
+    private final StoreRepository storeRepository;
+    private final StoreService storeService;
+    private final CategoryRepository categoryRepository;
     @Value("${imageDir}")
     private String dir;
     private final ProductRepository productRepository;
+    private final CategoryService categoryService;
 
-    public ProductServiceImpl( ProductRepository productRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, StoreRepository storeRepository, CategoryService categoryService, StoreService storeService, CategoryRepository categoryRepository) {
 
         this.productRepository = productRepository;
+        this.storeRepository = storeRepository;
+        this.categoryService = categoryService;
+        this.storeService = storeService;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
@@ -40,6 +52,13 @@ public class ProductServiceImpl implements ProductService{
           product.setQuantity(req.getQuantity());
           product.setCreatedAt(LocalDate.now());
           product.setUpdatedAt(LocalDate.now());
+
+          Store store = storeRepository.findById(1).get();
+          product.setStore(store);// hardcoded for testing purpose later we will change it
+        Category category = categoryService.getCategoryByid(1);
+        product.setCategory(category);
+          product.setSku(""); // db columns is not nullable so i passed empty string, later we will change it
+            product.setSlug("");
 
           // store the name of uploaded files in an arraylist
         // if any error eccurs then we can loop through this list and delete all the files
@@ -76,6 +95,9 @@ public class ProductServiceImpl implements ProductService{
                           savedProduct.getProductId()
           );
           savedProduct.setSlug(Utils.generateSlug(req.getName(),  savedProduct.getProductId()));
+
+          store.addProducts(savedProduct);
+          categoryRepository.findById(1).get().addProduct(savedProduct); //  hardcoded for testing
           return productRepository.save(savedProduct);
 
         } catch (Exception e) {

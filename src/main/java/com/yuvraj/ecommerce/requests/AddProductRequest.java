@@ -18,10 +18,22 @@ public class AddProductRequest {
     private String description;
     private double price;
     private int quantity;
+    private List<MultipartFile> images;
 
     // image name will be generated with filename + uuid
     // altText will be product name
     // first image will be primary image
 
-    private List<MultipartFile> images;
+
+    @Override
+    public String toString() {
+        return "AddProductRequest{" +
+                "name='" + name + '\'' +
+                ", brand='" + brand + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                ", images=" + images +
+                '}';
+    }
 }

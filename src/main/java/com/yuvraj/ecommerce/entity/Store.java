@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -44,5 +45,10 @@ public class Store {
 
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Product> products;
+    private List<Product> products = new ArrayList<>();
+
+    public void addProducts(Product product){
+        this.products.add(product);
+        product.setStore(this);
+    }
 }
