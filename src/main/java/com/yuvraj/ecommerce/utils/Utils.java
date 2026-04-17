@@ -11,7 +11,7 @@ public class Utils {
 //        return new BCryptPasswordEncoder();
 //    }
 
-    public String generateSlug(String name, Long id) {
+    public static String generateSlug(String name, int id) {
         String slug = name.toLowerCase()
                 .replaceAll("[^a-z0-9\\s]", "")   // remove special chars
                 .trim()
