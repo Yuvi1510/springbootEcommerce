@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<Store, Integer> {
     Optional<Store> findStoreByEmail(String email);
+    Optional<Store> findStoreByStoreId(int id);
 }

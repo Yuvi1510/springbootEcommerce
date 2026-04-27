@@ -7,9 +7,12 @@ import com.yuvraj.ecommerce.entity.Category;
 import com.yuvraj.ecommerce.entity.Product;
 import com.yuvraj.ecommerce.entity.ProductImage;
 import com.yuvraj.ecommerce.entity.Store;
+import com.yuvraj.ecommerce.exceptionHandling.NotFountException;
 import com.yuvraj.ecommerce.requests.AddProductRequest;
 import com.yuvraj.ecommerce.utils.Utils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,25 +23,42 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService{
-    private final StoreRepository storeRepository;
-    private final StoreService storeService;
-    private final CategoryRepository categoryRepository;
     @Value("${imageDir}")
     private String dir;
+
+    private final StoreService storeService;
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
 
-    public ProductServiceImpl(ProductRepository productRepository, StoreRepository storeRepository, CategoryService categoryService, StoreService storeService, CategoryRepository categoryRepository) {
+    public ProductServiceImpl(ProductRepository productRepository,  CategoryService categoryService, StoreService storeService, CategoryRepository categoryRepository) {
 
         this.productRepository = productRepository;
-        this.storeRepository = storeRepository;
+
         this.categoryService = categoryService;
         this.storeService = storeService;
-        this.categoryRepository = categoryRepository;
+
+    }
+
+    @Override
+    public Product findProductById(int id) {
+        Optional<Product> optional =  productRepository.findById(id);
+
+        return optional.orElseThrow(() ->  new NotFountException("Product now found with id: " + id));
+    }
+
+    @Override
+    public Page<Product> findAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Product> findProductsByCategoryId(int id, Pageable pageable) {
+        return productRepository.findProductByCategoryCategoryId(id, pageable);
     }
 
     @Override
@@ -53,9 +73,10 @@ public class ProductServiceImpl implements ProductService{
           product.setCreatedAt(LocalDate.now());
           product.setUpdatedAt(LocalDate.now());
 
-          Store store = storeRepository.findById(1).get();
+          // get store and category and set it to product
+          Store store = storeService.findById(req.getStoreId());
           product.setStore(store);// hardcoded for testing purpose later we will change it
-        Category category = categoryService.getCategoryByid(1);
+        Category category = categoryService.findCategoryByName(req.getCategory());
         product.setCategory(category);
           product.setSku(""); // db columns is not nullable so i passed empty string, later we will change it
             product.setSlug("");
@@ -97,7 +118,7 @@ public class ProductServiceImpl implements ProductService{
           savedProduct.setSlug(Utils.generateSlug(req.getName(),  savedProduct.getProductId()));
 
           store.addProducts(savedProduct);
-          categoryRepository.findById(1).get().addProduct(savedProduct); //  hardcoded for testing
+          category.addProduct(savedProduct);
           return productRepository.save(savedProduct);
 
         } catch (Exception e) {
@@ -108,6 +129,14 @@ public class ProductServiceImpl implements ProductService{
           throw e;
       }
     }
+
+    @Override
+    public List<Product> findProductsByStore(int id) {
+        Store store = storeService.findStoreById(id);
+        List<Product> products = store.getProducts();
+        return products;
+    }
+
 
     private void deleteUploadedFile(String file) {
         try{

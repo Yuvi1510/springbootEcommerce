@@ -1,17 +1,17 @@
 package com.yuvraj.ecommerce.controller;
 
 import com.yuvraj.ecommerce.dao.StoreRepository;
+import com.yuvraj.ecommerce.entity.Product;
 import com.yuvraj.ecommerce.entity.Store;
 import com.yuvraj.ecommerce.entity.User;
 import com.yuvraj.ecommerce.requests.StoreRegistrationRequest;
-import com.yuvraj.ecommerce.service.StoreService;
-import com.yuvraj.ecommerce.service.StoreServiceImpl;
-import com.yuvraj.ecommerce.service.UserService;
-import com.yuvraj.ecommerce.service.UserServiceImpl;
+import com.yuvraj.ecommerce.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/stores")
@@ -20,15 +20,15 @@ public class StoreController {
     private final StoreService storeService;
     private final UserService userService;
     private final ModelMapper modelMapper;
-    private final StoreRepository storeRepository;
+    private final ProductService productService;
 
     @Autowired
-    public StoreController(StoreServiceImpl storeService, UserServiceImpl userService, ModelMapper modelMapper,
-                           StoreRepository storeRepository) {
+    public StoreController(StoreService storeService, UserService userService, ModelMapper modelMapper,
+                           StoreRepository storeRepository, ProductService productService) {
         this.storeService = storeService;
         this.userService = userService;
         this.modelMapper = modelMapper;
-        this.storeRepository = storeRepository;
+        this.productService = productService;
     }
 
     @PostMapping
@@ -40,5 +40,13 @@ public class StoreController {
         Store newStore = storeService.registerStore(store);
 
         return ResponseEntity.ok().body(newStore);
+    }
+
+    @GetMapping("/{storeId}/products")
+    public ResponseEntity<?> findProductsByStore(@PathVariable int storeId){
+        List<Product> products = productService.findProductsByStore(storeId);
+        System.out.println("controller");
+        System.out.println(products);
+        return ResponseEntity.ok().body(products);
     }
 }

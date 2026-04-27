@@ -26,4 +26,16 @@ public class StoreServiceImpl implements StoreService{
         store.setUpdatedAt(LocalDate.now());
         return storeRepository.save(store);
     }
+
+    @Override
+    public Store findStoreById(int id) {
+        Optional<Store> optional = storeRepository.findStoreByStoreId(id);
+        return optional.orElse(null);
+
+    }
+
+    @Override
+    public Store findById(int storeId) {
+        return storeRepository.findById(storeId).orElse(null);
+    }
 }

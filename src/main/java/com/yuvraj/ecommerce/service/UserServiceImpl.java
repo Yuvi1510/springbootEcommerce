@@ -7,6 +7,9 @@ import com.yuvraj.ecommerce.requests.RegistrationRequest;
 import com.yuvraj.ecommerce.responses.UserResponseDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +20,13 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final BCryptPasswordEncoder encoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, BCryptPasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
+        this.encoder = encoder;
     }
 
 
@@ -33,6 +38,7 @@ public class UserServiceImpl implements UserService{
         user.setLocked(false);
         user.setCreatedAt(LocalDate.now());
         user.setUpdatedAt(LocalDate.now());
+        user.setPassword(encoder.encode(user.getPassword()));
 
         return userRepository.save(user);
     }
@@ -43,5 +49,14 @@ public class UserServiceImpl implements UserService{
         User user = optional.orElseThrow(() -> new NotFountException("User not found with id: "+ id));
 
         return user;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+       User user = this.userRepository.findUserByEmail(username)
+               .orElseThrow(() -> new NotFountException("User now found with this email: "+ username));
+
+       return user;
+
     }
 }
