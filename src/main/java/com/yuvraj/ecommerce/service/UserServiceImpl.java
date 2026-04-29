@@ -2,6 +2,7 @@ package com.yuvraj.ecommerce.service;
 
 import com.yuvraj.ecommerce.dao.UserRepository;
 import com.yuvraj.ecommerce.entity.User;
+import com.yuvraj.ecommerce.exceptionHandling.AlreadyExists;
 import com.yuvraj.ecommerce.exceptionHandling.NotFountException;
 import com.yuvraj.ecommerce.requests.RegistrationRequest;
 import com.yuvraj.ecommerce.responses.UserResponseDto;
@@ -32,6 +33,12 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User registerUser(RegistrationRequest request) {
+        Optional<User> optional = this.userRepository.findUserByEmail(request.getEmail());
+        if(optional.isPresent()){
+            throw new AlreadyExists("User", "email", request.getEmail());
+        }
+
+
         User user = modelMapper.map(request, User.class);
         user.setEmailVerified(true);
         user.setActive(true);

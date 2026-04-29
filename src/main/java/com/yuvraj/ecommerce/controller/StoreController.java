@@ -15,7 +15,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/stores")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class StoreController {
     private final StoreService storeService;
     private final UserService userService;

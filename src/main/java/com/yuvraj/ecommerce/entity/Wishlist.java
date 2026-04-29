@@ -24,6 +24,16 @@ public class Wishlist {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "wishlist", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "wishlist", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<WishlistItem> wishlistItems = new ArrayList<>();
+
+    public void addToWishlist(WishlistItem wishlistItem){
+        wishlistItems.add(wishlistItem);
+        wishlistItem.setWishlist(this);
+    }
+
+    public void removeFromWishlist(WishlistItem wishlistItem){
+        wishlistItems.remove(wishlistItem);
+        wishlistItem.setWishlist(null);
+    }
 }

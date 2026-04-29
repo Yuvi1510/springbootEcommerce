@@ -30,4 +30,10 @@ public class WishlistItem {
     @OneToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
+
+    public WishlistItem(Product product){
+        this.product = product;
+        this.addedAt = LocalDateTime.now();
+    }
 }

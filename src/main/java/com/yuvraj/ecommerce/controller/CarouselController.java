@@ -18,7 +18,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/carousel")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class CarouselController {
     private final CarouselService service;
 
