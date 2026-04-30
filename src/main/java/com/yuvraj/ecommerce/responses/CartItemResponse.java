@@ -18,13 +18,15 @@ public class CartItemResponse {
     private int quantity;
     private double unitPrice;
     private double totalPrice;
+    private int cartId;
 
-    public CartItemResponse(int id, String productName, List<ProductImage> images, int quantity, double unitPrice, double total){
+    public CartItemResponse(int id, String productName, List<ProductImage> images, int quantity, double unitPrice, double total, int cartId){
         this.id = id;
         this.productName = productName;
         this.images = images;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.totalPrice = total;
+        this.cartId = cartId;
     }
 }

@@ -3,9 +3,12 @@ package com.yuvraj.ecommerce.service;
 import com.yuvraj.ecommerce.dao.CategoryRepository;
 import com.yuvraj.ecommerce.dao.ProductRepository;
 import com.yuvraj.ecommerce.dao.StoreRepository;
+import com.yuvraj.ecommerce.dao.UserRepository;
 import com.yuvraj.ecommerce.entity.*;
 import com.yuvraj.ecommerce.exceptionHandling.NotFountException;
+import com.yuvraj.ecommerce.exceptionHandling.UnAuthenticatedException;
 import com.yuvraj.ecommerce.requests.AddProductRequest;
+import com.yuvraj.ecommerce.utils.SecurityUtils;
 import com.yuvraj.ecommerce.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,23 +28,22 @@ import java.util.*;
 
 @Service
 public class ProductServiceImpl implements ProductService{
+    private final UserRepository userRepository;
     @Value("${imageDir}")
     private String dir;
 
-    private final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    private User user = authentication == null? null: (User) authentication.getPrincipal();
     private final StoreService storeService;
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository,  CategoryService categoryService, StoreService storeService) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryService categoryService, StoreService storeService, UserRepository userRepository) {
 
         this.productRepository = productRepository;
 
         this.categoryService = categoryService;
         this.storeService = storeService;
-
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -63,6 +65,17 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public Product addProduct(AddProductRequest req) {
+
+        // get the authenticated user
+        User authenticatedUser = SecurityUtils.getCurrentUser();
+
+        if(authenticatedUser == null){
+            throw new UnAuthenticatedException("Please login first");
+        }
+        Optional<User> optional = userRepository.findUserByEmail(authenticatedUser.getEmail());
+        User user = optional.orElseThrow(() -> new NotFountException("User not found"));
+
+
         // create a new product object and set the details
           Product product = new Product();
           product.setName(req.getName());
@@ -74,10 +87,8 @@ public class ProductServiceImpl implements ProductService{
           product.setUpdatedAt(LocalDate.now());
 
           // get store and category and set it to product
-        Store store = null;
-        if (user != null) {
-            store = user.getStore();
-        }
+        Store store = user.getStore();
+
 
           product.setStore(store);
         Category category = categoryService.findCategoryByName(req.getCategory());
@@ -112,7 +123,7 @@ public class ProductServiceImpl implements ProductService{
           }
 
           Product savedProduct = productRepository.save(product);
-          int end = Math.min(product.getName().length(), 3);
+          int end = Math.min(product.getName().length(), 3); // get no of characters for sku and slug
           int brandEnd = Math.min(product.getBrand().length(), 3);
           savedProduct.setSku(
                   savedProduct.getBrand().substring(0,brandEnd) + "-"+

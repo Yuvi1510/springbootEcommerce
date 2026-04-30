@@ -12,5 +12,5 @@ public interface CartService {
     boolean addToCart(int productId, int quantity);
     boolean removeFromCart(Cart cart, CartItem cartItem);
     CartItem updateQuantity(CartItem cartItem, int quantity);
-    public List<CartItemResponse> getCartItems(User user);
+    public List<CartItemResponse> getCartItems();
 }

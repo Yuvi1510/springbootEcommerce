@@ -7,6 +7,7 @@ import com.yuvraj.ecommerce.entity.Cart;
 import com.yuvraj.ecommerce.entity.CartItem;
 import com.yuvraj.ecommerce.entity.Product;
 import com.yuvraj.ecommerce.entity.User;
+import com.yuvraj.ecommerce.exceptionHandling.NotFountException;
 import com.yuvraj.ecommerce.exceptionHandling.UnAuthenticatedException;
 import com.yuvraj.ecommerce.responses.CartItemResponse;
 import com.yuvraj.ecommerce.utils.SecurityUtils;
@@ -45,9 +46,18 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
-    public List<CartItemResponse> getCartItems(User user){
+    public List<CartItemResponse> getCartItems(){
 
-        List<CartItem> cartItems =  this.cartRepository.getCartItemsByCartId(user.getCart().getCartId());
+        User authenticatedUser = SecurityUtils.getCurrentUser();
+
+        if(authenticatedUser == null){
+            throw new UnAuthenticatedException("Please login first!");
+        }
+
+       Optional<User> optional = userRepository.findUserByEmail(authenticatedUser.getEmail());
+        User user = optional.orElseThrow(() -> new NotFountException("User not found"));
+
+        List<CartItem> cartItems =  user.getCart().getCartItems();
 
         List<CartItemResponse> res = cartItems.stream()
                 .map(i -> new CartItemResponse(
@@ -56,7 +66,8 @@ public class CartServiceImpl implements CartService{
                         i.getProduct().getImages(),
                         i.getQuantity(),
                         i.getProduct().getPrice(),
-                        i.getTotal()
+                        i.getTotal(),
+                        i.getCart().getCartId()
                 )).collect(Collectors.toList());
 
         return res;
@@ -70,15 +81,35 @@ public class CartServiceImpl implements CartService{
             throw new UnAuthenticatedException("Please login first!");
         }
 
+        // get the authenticated user
         Optional<User> optional = userRepository.findUserByEmail(authenticatedUser.getEmail());
-
         User user = optional.orElseThrow(()->   new UnAuthenticatedException("Please login first!"));
 
-        System.out.println(user.getUsername());
 
+        // get the cart of the user
         Cart cart = this.cartRepository.findByUserId(user.getUserId());
-        System.out.println(cart.getCartId());
+
+        // get the cart items and check of the item already exists
+        List<CartItem> cartItems = cart.getCartItems();
         Product product = productService.findProductById(productId);
+
+        for(CartItem cartItem: cartItems){
+            if(cartItem.getProduct().getProductId() == productId){
+                // if the cart item already exists then don't add just update the quaantity
+
+                cartItem.setQuantity( quantity);
+
+                // update the total as well
+                cartItem.setTotal(quantity * cartItem.getProduct().getPrice());
+
+                // save the cart with updated cartItem
+                cartRepository.save(cart);
+                return true;
+            }
+        }
+
+        // if cartitem is not present then create new one
+        // add to cart and save the cart
         CartItem cartItem = new CartItem(product, quantity);
         cart.addCartItem(cartItem);
 
