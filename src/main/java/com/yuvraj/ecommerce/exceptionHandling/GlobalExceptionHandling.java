@@ -21,4 +21,16 @@ public class GlobalExceptionHandling {
         }
         return ResponseEntity.status(status).body(new ApiResponse(msg, status));
     }
+
+    @ExceptionHandler({UnAuthenticatedException.class})
+    public ResponseEntity<ApiResponse> handleAuthenticationAndAuthorizationException(RuntimeException e){
+        String msg = e.getMessage();
+        HttpStatus status = null;
+
+        if(e instanceof UnAuthenticatedException){
+            status = HttpStatus.UNAUTHORIZED;
+        }
+
+        return ResponseEntity.badRequest().body(new ApiResponse(msg, status));
+    }
 }

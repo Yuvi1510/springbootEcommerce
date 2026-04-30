@@ -3,16 +3,16 @@ package com.yuvraj.ecommerce.service;
 import com.yuvraj.ecommerce.dao.CategoryRepository;
 import com.yuvraj.ecommerce.dao.ProductRepository;
 import com.yuvraj.ecommerce.dao.StoreRepository;
-import com.yuvraj.ecommerce.entity.Category;
-import com.yuvraj.ecommerce.entity.Product;
-import com.yuvraj.ecommerce.entity.ProductImage;
-import com.yuvraj.ecommerce.entity.Store;
+import com.yuvraj.ecommerce.entity.*;
 import com.yuvraj.ecommerce.exceptionHandling.NotFountException;
 import com.yuvraj.ecommerce.requests.AddProductRequest;
 import com.yuvraj.ecommerce.utils.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,21 +21,21 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ProductServiceImpl implements ProductService{
     @Value("${imageDir}")
     private String dir;
 
+    private final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    private User user = authentication == null? null: (User) authentication.getPrincipal();
     private final StoreService storeService;
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
 
-    public ProductServiceImpl(ProductRepository productRepository,  CategoryService categoryService, StoreService storeService, CategoryRepository categoryRepository) {
+    @Autowired
+    public ProductServiceImpl(ProductRepository productRepository,  CategoryService categoryService, StoreService storeService) {
 
         this.productRepository = productRepository;
 
@@ -74,8 +74,12 @@ public class ProductServiceImpl implements ProductService{
           product.setUpdatedAt(LocalDate.now());
 
           // get store and category and set it to product
-          Store store = storeService.findById(req.getStoreId());
-          product.setStore(store);// hardcoded for testing purpose later we will change it
+        Store store = null;
+        if (user != null) {
+            store = user.getStore();
+        }
+
+          product.setStore(store);
         Category category = categoryService.findCategoryByName(req.getCategory());
         product.setCategory(category);
           product.setSku(""); // db columns is not nullable so i passed empty string, later we will change it

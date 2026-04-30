@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import java.util.List;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -19,4 +18,13 @@ public class CartItemResponse {
     private int quantity;
     private double unitPrice;
     private double totalPrice;
+
+    public CartItemResponse(int id, String productName, List<ProductImage> images, int quantity, double unitPrice, double total){
+        this.id = id;
+        this.productName = productName;
+        this.images = images;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+        this.totalPrice = total;
+    }
 }

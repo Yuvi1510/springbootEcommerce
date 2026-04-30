@@ -20,7 +20,7 @@ public class AddProductRequest {
     private int quantity;
     private List<MultipartFile> images;
     private String category;
-    private int storeId;
+//    private int storeId;
 
     // image name will be generated with filename + uuid
     // altText will be product name

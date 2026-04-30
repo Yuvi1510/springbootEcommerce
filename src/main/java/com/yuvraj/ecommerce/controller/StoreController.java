@@ -9,9 +9,11 @@ import com.yuvraj.ecommerce.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/stores")
@@ -33,7 +35,7 @@ public class StoreController {
     @PostMapping
     public ResponseEntity<Store> registerStore(@RequestBody StoreRegistrationRequest request){
         Store store = modelMapper.map(request, Store.class);
-        User user = userService.findUserById(1);// hardcoded for testing
+        User user = (User) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
         store.setUser(user);
 
         Store newStore = storeService.registerStore(store);
