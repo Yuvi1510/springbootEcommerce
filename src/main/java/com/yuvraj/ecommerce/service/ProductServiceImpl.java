@@ -35,15 +35,17 @@ public class ProductServiceImpl implements ProductService{
     private final StoreService storeService;
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
+    private final SecurityUtils securityUtils;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CategoryService categoryService, StoreService storeService, UserRepository userRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryService categoryService, StoreService storeService, UserRepository userRepository, SecurityUtils securityUtils) {
 
         this.productRepository = productRepository;
 
         this.categoryService = categoryService;
         this.storeService = storeService;
         this.userRepository = userRepository;
+        this.securityUtils = securityUtils;
     }
 
     @Override
@@ -67,13 +69,7 @@ public class ProductServiceImpl implements ProductService{
     public Product addProduct(AddProductRequest req) {
 
         // get the authenticated user
-        User authenticatedUser = SecurityUtils.getCurrentUser();
-
-        if(authenticatedUser == null){
-            throw new UnAuthenticatedException("Please login first");
-        }
-        Optional<User> optional = userRepository.findUserByEmail(authenticatedUser.getEmail());
-        User user = optional.orElseThrow(() -> new NotFountException("User not found"));
+        User user = securityUtils.getCurrentUser();
 
 
         // create a new product object and set the details

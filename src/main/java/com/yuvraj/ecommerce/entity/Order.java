@@ -35,17 +35,17 @@ public class Order {
     @Column(name = "payment_status")
     private PaymentStatus paymentStatus;
 
-    @Column(name = "sub_total", precision = 10, scale = 2, nullable = false)
-    private BigDecimal subTotal;
+    @Column(name = "sub_total", nullable = false)
+    private double subTotal;
 
-    @Column(name = "tax_amount", precision = 10, scale = 2, nullable = false)
-    private BigDecimal taxAmount;
+    @Column(name = "tax_amount", nullable = false)
+    private double taxAmount;
 
-    @Column(name = "delivery_charge", precision = 10, scale = 2, nullable = false)
-    private BigDecimal deliveryCharge;
+    @Column(name = "delivery_charge", nullable = false)
+    private double deliveryCharge;
 
-    @Column(name = "total", precision = 10, scale = 2, nullable = false)
-    private BigDecimal total;
+    @Column(name = "total", nullable = false)
+    private double total;
 
     @Column(name = "status", length = 50, nullable = false)
     private String status = "accepted";
@@ -58,10 +58,29 @@ public class Order {
     @JoinColumn(name = "User_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "address_id")
-    private UserAddress userAddress;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItemList = new ArrayList<>();
+
+
+    public void removeOrderItem(OrderItem orderItem){
+        this.orderItemList.remove(orderItem);
+        orderItem.setOrder(null);
+    }
+
+    public void createOrder(List<OrderItem> orderItemList){
+        this.orderStatus = OrderStatus.PENDING;
+        this.paymentStatus = PaymentStatus.PENDING;
+
+        for(OrderItem orderItem: orderItemList){
+            this.orderItemList.add(orderItem);
+            orderItem.setOrder(this);
+            this.subTotal += (orderItem.getPriceAtPurchase() * orderItem.getOrderQuantity());
+        }
+
+        this.taxAmount = subTotal * 0.13;
+
+        this.total = this.subTotal + this.taxAmount + this.deliveryCharge;
+
+    }
 }

@@ -27,14 +27,15 @@ public class CartServiceImpl implements CartService{
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
    private final ProductService productService;
-    private final UserRepository userRepository;
+    private final SecurityUtils securityUtils;
+
 
     @Autowired
-    public CartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository, ProductService productService, UserRepository userRepository) {
+    public CartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository, ProductService productService, SecurityUtils securityUtils) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.productService = productService;
-        this.userRepository = userRepository;
+        this.securityUtils = securityUtils;
     }
 
     @Override
@@ -48,14 +49,7 @@ public class CartServiceImpl implements CartService{
     @Override
     public List<CartItemResponse> getCartItems(){
 
-        User authenticatedUser = SecurityUtils.getCurrentUser();
-
-        if(authenticatedUser == null){
-            throw new UnAuthenticatedException("Please login first!");
-        }
-
-       Optional<User> optional = userRepository.findUserByEmail(authenticatedUser.getEmail());
-        User user = optional.orElseThrow(() -> new NotFountException("User not found"));
+        User user = securityUtils.getCurrentUser();
 
         List<CartItem> cartItems =  user.getCart().getCartItems();
 
@@ -76,15 +70,7 @@ public class CartServiceImpl implements CartService{
     @Override
     @Transactional
     public boolean addToCart(int productId, int quantity) {
-         User authenticatedUser = SecurityUtils.getCurrentUser();
-        if(authenticatedUser == null){
-            throw new UnAuthenticatedException("Please login first!");
-        }
-
-        // get the authenticated user
-        Optional<User> optional = userRepository.findUserByEmail(authenticatedUser.getEmail());
-        User user = optional.orElseThrow(()->   new UnAuthenticatedException("Please login first!"));
-
+         User user = securityUtils.getCurrentUser();
 
         // get the cart of the user
         Cart cart = this.cartRepository.findByUserId(user.getUserId());
@@ -94,16 +80,20 @@ public class CartServiceImpl implements CartService{
         Product product = productService.findProductById(productId);
 
         for(CartItem cartItem: cartItems){
+            // check is product already exists
             if(cartItem.getProduct().getProductId() == productId){
-                // if the cart item already exists then don't add just update the quaantity
+                // check if the product is not added again from add to cart
+                // quantity == 1 only if add to cart is clicked
+                if(quantity != 1){
+                    // if the cart item already exists then don't add just update the quaantity
+                    cartItem.setQuantity(quantity);
 
-                cartItem.setQuantity( quantity);
+                    // update the total as well
+                    cartItem.setTotal(quantity * cartItem.getProduct().getPrice());
 
-                // update the total as well
-                cartItem.setTotal(quantity * cartItem.getProduct().getPrice());
-
-                // save the cart with updated cartItem
-                cartRepository.save(cart);
+                    // save the cart with updated cartItem
+                    cartRepository.save(cart);
+                }
                 return true;
             }
         }
