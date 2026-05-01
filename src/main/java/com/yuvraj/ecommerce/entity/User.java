@@ -72,6 +72,9 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAddress> addresses = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders = new ArrayList<>();
+
     //methods
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -101,5 +104,26 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
+    }
+
+    // helper methods
+    public void addAddress(UserAddress address) {
+        addresses.add(address);
+        address.setUser(this); // VERY IMPORTANT
+    }
+
+    public void removeAddress(UserAddress address) {
+        addresses.remove(address);
+        address.setUser(null);
+    }
+
+    public void addOrder(Order order) {
+        orders.add(order);
+        order.setUser(this);
+    }
+
+    public void removeOrder(Order order) {
+        orders.remove(order);
+        order.setUser(null);
     }
 }

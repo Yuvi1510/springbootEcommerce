@@ -24,7 +24,7 @@ public class CartItem {
     @Column(name = "total")
     private double total;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 
